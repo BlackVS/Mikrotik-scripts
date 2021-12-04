@@ -1,0 +1,9 @@
+#######################################################
+# func_time2int - convert time to int
+# Input: 
+#    time in format "HH:MM:SS"
+# Output:
+#    integer equal to seconds total. Can be used to compare time
+#######################################################
+:local res ([:tonum [:pick $time 0 2]]*3600+[:tonum [:pick $time 3 5]]*60+[:tonum [:pick $time 6 8]])
+:return $res

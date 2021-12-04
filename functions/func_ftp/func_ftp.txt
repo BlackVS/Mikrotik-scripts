@@ -1,0 +1,53 @@
+#########################################################
+# Wrapper for /tools fetch mode=ftp
+#  Input:
+#    upload=yes/no
+#    user
+#    password
+#    address
+#    host
+#    src-path
+#    dst-path
+#    ascii=yes/no
+#    url
+#    resfile
+
+:local ftpres "ftpresult.txt"
+:if ([:len $resfile]>0) do={:set ftpres $resfile}
+
+:local cmd "/tool fetch mode=ftp"
+:if ([:len $upload]>0) do={:set cmd "$cmd upload=$upload"}
+:if ([:len $user]>0) do={:set cmd "$cmd user=\"$user\""}
+:if ([:len $password]>0) do={:set cmd "$cmd password=\"$password\""}
+:if ([:len $address]>0) do={:set cmd "$cmd address=\"$address\""}
+:if ([:len $host]>0) do={:set cmd "$cmd hos=\"$hos\""}
+:if ([:len $"src-path"]>0) do={:set cmd "$cmd src-path=\"$"src-path"\""}
+:if ([:len $"dst-path"]>0) do={:set cmd "$cmd dst-path=\"$"dst-path"\""}
+:if ([:len $ascii]>0) do={:set cmd "$cmd ascii=\"$ascii\""}
+:if ([:len $url]>0) do={:set cmd "$cmd url=\"$url\""}
+
+#:put ">> $cmd"
+
+:global FTPRESULT
+:set FTPRESULT "none"
+
+:local script "\
+ :global FTPRESULT;\
+ :do {\
+   $cmd;\
+   :set FTPRESULT \"success\";\
+ } on-error={\
+  :set FTPRESULT \"failed\";\
+ }\
+"
+:execute script=$script file=$ftpres
+:local cnt 0
+#:put "$cnt -> $FTPRESULT"
+:while ($cnt<100 and $FTPRESULT="none") do={ 
+ :delay 1s
+ :set $cnt ($cnt+1)
+ #:put "$cnt -> $FTPRESULT"
+}
+:local content [/file get [find name=$ftpres] content]
+if ($content~"finished") do={:return "success"}
+:return $FTPRESULT

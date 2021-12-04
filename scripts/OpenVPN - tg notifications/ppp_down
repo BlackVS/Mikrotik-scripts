@@ -1,0 +1,2 @@
+:local send [:parse [/system script get ppp_notify source]]
+$send txt="PPP DOWN" user=$user interface=$interface localAddr=$"local-address" remoteAddr=$"remote-address" callerId=$"caller-id" calledId=$"called-id"

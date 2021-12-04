@@ -1,0 +1,28 @@
+#####################################
+# Script: func_getlastbackup_byid                                     
+# Input: None                                                             
+# Output: return name of last backup                         
+#####################################
+
+#local variables
+:local numBackup
+:local idBackup
+:local nameBackup
+
+#get last backup number
+:set numBackup ([:len [/file find type=backup]]-1)
+#:put $numBackup
+
+#return nil if none backups
+:if ($numBackup<0) do={:return nil}
+
+#get id of needed backup 
+:set idBackup ([/file find type=backup]->$numBackup)
+#put $idBackup
+
+#find name of backup
+:set nameBackup [/file get $idBackup name]
+#:put $nameBackup
+
+#return found result - for case of functions
+:return $nameBackup

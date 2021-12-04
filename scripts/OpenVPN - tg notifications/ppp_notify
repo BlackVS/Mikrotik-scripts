@@ -1,0 +1,18 @@
+:local send [:parse [/system script get tg_sendMessage source]]
+
+:local interfaceName 
+:set interfaceName ""
+
+:if ([:len $interface]>0) do={ 
+    :do {
+      :set interfaceName [/interface get $interface name] 
+     } on-error= { :log warn "ppp_notify: Failed to get name of interface"};
+ }
+
+:local msg
+:set msg ("$txt: user $user (src=$callerId, dst=$calledId) connected: ip=$remoteAddr gw=$localAddr ")
+:if ([:len $interfaceName]>0) do={ :set msg ( $msg . " interface=$interfaceName" ) }
+
+:log info $msg
+
+$send text=("$msg")

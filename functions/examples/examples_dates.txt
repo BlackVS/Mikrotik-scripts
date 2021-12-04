@@ -1,0 +1,25 @@
+:global datetime2str [:parse [/system script get func_datetime2str source]]
+:put "\nfunc_datetime2str: none input, current date and time used"
+:put [$datetime2str]
+:put "\nfunc_datetime2str: date=\"sep/13/2016\" time=\"15:13:22\""
+:put [$datetime2str date="sep/13/2016" time="15:13:22"]
+
+:global date2int [:parse [/system script get func_date2int source]]
+:put "\nfunc_date2int:  date=\"sep/13/2016\""
+:put [$date2int date="sep/13/2016"]
+
+:global time2int [:parse [/system script get func_time2int source]]
+:put "\nfunc_time2int: time=\"15:13:22\""
+:put [$time2int time="15:13:22"]
+
+:global cmp2dates [:parse [/system script get func_cmp2dates source]]
+:put "\nfunc_cmp2dates: date1=\"sep/13/2016\" date2=\"oct/12/2015\""
+:put [$cmp2dates date1="sep/13/2016" date2="oct/12/2015"]
+
+:global getlastbackupbyid [:parse [/system script get func_getlastbackup_byid source]]
+:put "\nfunc_getlastbackup_byid:"
+:put [$getlastbackupbyid]
+
+:global getlastbackup [:parse [/system script get func_getlastbackup source]]
+:put "\nfunc_getlastbackup (by creation time):"
+:put [$getlastbackup]

@@ -1,0 +1,43 @@
+:local fconfig [:parse [/system script get certs_defaults source]]
+:local cfg [$fconfig]
+
+:local NAME ($cfg->"NAME")
+:local CA ($cfg->"CNCA")
+:local CN ($cfg->"CNSRV")
+:local COUNTRY ($cfg->"COUNTRY")
+:local STATE ($cfg->"STATE")
+:local LOCALITY ($cfg->"LOCALITY")
+:local ORG ($cfg->"ORG")
+:local OU ($cfg->"OU")
+:local KEYSIZE ($cfg->"KEYSIZE")
+:local DAYSVALID ($cfg->"DAYSVALID")
+:local ALT ($cfg->"ALT")
+:
+## generate a CA certificate
+/certificate
+:put "Creating template:"
+:put " CA=$CA"
+:put " CN=$CN"
+:put " COUNTRY=$COUNTRY"
+:put " STATE=$STATE"
+:put " LOCALITY=$LOCALITY"
+:put " ORG=$ORG"
+:put " OU=$OU"
+:put " KEYSIZE=$KEYSIZE"
+:put " DAYSVALID=$DAYSVALID"
+
+add name=tempSERVER\
+country="$COUNTRY"\
+state="$STATE"\
+locality="$LOCALITY"\
+organization="$ORG"\
+unit="$OU"\
+common-name="$CN"\
+key-size=$KEYSIZE\
+days-valid=$DAYSVALID\
+key-usage=digital-signature,key-encipherment,tls-server
+
+:put "Signing SERVER@$NAME key..."
+sign tempSERVER ca="$CA" name="SERVER@$NAME"
+
+:put "Done!"

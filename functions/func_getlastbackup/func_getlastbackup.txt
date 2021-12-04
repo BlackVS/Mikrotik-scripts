@@ -1,0 +1,37 @@
+#####################################
+# Script: func_getlastbackup                                 
+# Input: None                                                             
+# Output: return name of last backup using creation-time                    
+#####################################
+#use external functions
+:global cmp2dates [:parse [/system script get func_cmp2dates source]]
+
+#local variables
+:local resName ""
+:local resDate ""
+:local resTime ""
+
+#get list of backups
+:local arrBackups ([/file find type=backup])
+
+:foreach id in $arrBackups do={
+ #get properties
+ :local backup [/file get $id]
+ :local curName ($backup->"name")
+ :local curCreationTime ($backup->"creation-time")
+ :local curDate [:pick $curCreationTime 0 11]
+ :local curTime [:pick $curCreationTime 12 20]
+ :if ($resName="" ) do={
+   :set $resName $curName
+   :set $resDate $curDate
+   :set $resTime $curTime
+ }
+
+ :local cmp [$cmp2dates date1=$curDate date2=$resDate]
+ :if ($cmp=1 or ($cmp=0 and [:totime $curTime]>[:totime $resTime])) do={
+   :set $resName $curName
+   :set $resDate $curDate
+   :set $resTime $curTime
+ }
+}
+:return $resName 

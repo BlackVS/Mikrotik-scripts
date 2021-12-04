@@ -1,0 +1,2 @@
+Here must be your router CA certificate 
+(run certs_createCA and copy exported certificate here)

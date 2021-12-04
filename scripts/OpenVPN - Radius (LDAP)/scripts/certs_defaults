@@ -1,0 +1,38 @@
+######################################
+# Certificates defaults                       VVS/BlackVS 2019
+######################################
+:put "CERTS: Load defaults"
+
+# to use config insert next lines:
+#:local fconfig [:parse [/system script get certs_defaults source]]
+#:local config [$fconfig]
+#:put $config
+
+######################################
+# Common parameters
+######################################
+
+:local NAME "$[/system identity get name]";
+
+:local config {
+"NAME"="$NAME";
+"CNCA"="CA-$NAME";
+"CNSRV"="vpn.myserver.com";
+"COUNTRY"="US";
+"STATE"="NY";
+"LOCALITY"="New York";
+"ORG"="My company LLC";
+"OU"="IT Department";
+"KEYSIZE"=4096;
+"DAYSVALID"=3650;
+"ALT"="email:admin@vpn.myserver.com";
+
+"CNrouter"="mikrotik.mydomain.local";
+"SANrouter"="DNS:mikrotik.mydomain.local,IP:192.168.0.1";
+
+"CNnpm"="mikrotik.mydomain.local";
+"SANnpm"="DNS:npmserver.mydomain.local,IP:192.168.0.2";
+
+}
+
+return $config

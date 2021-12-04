@@ -1,0 +1,18 @@
+###################################################
+# func_getminbykey - find element in array with minimal value of some field 
+#
+# Input: inArray - array of elements as array of ids
+#           inKey - name of key for comparing
+#
+# Output: element of array with minimum inKey value
+################################################### 
+
+:local res
+:local resTime
+:foreach i in=[/file find type=backup] do={ 
+ :local t [/file get $i creation-time]
+ :put [:totime $t]
+ :if ( $resTime=nil ) do={:set resTime $t}
+ :if ( $t<$resTime) do={:set resTime $t}
+ :put $resTime
+}

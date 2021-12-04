@@ -1,0 +1,13 @@
+#FTP server 
+############################
+:local ftphost X.X.X.X
+:local ftpport 21
+:local ftpuser "mkbackup"
+:local ftppassword "pas$$w0rd"
+:local ftppath "backups/CCR-Home"
+:local ftpfile "123.backup"
+:local ftp [:parse [/system script get func_ftp source]]
+
+:local res [$ftp upload=yes user=$ftpuser password=$ftppassword src-path=$ftpfile address=$ftphost dst-path=($ftppath."/".$ftpfile) resfile="disk1/log.ftp.txt"]
+:put "Result=$res"
+:return $res

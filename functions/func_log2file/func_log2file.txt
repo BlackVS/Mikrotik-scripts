@@ -1,0 +1,71 @@
+#######################################################
+# func_log2file - logs text to file
+# Input: 
+#   file - name of log file without ".txt" extension
+#   text - text to log
+#   maxsize - maximum size of file.
+#   log - duplicate to specific local log. Values: info, error, warning, debug, no, by default=info. If "no" - don't output
+#   console - duplicate to console. yes/no. By default "no"
+# Warning - txt file can't be longer 4096 bytes. It is due to string size limitation. MAXSIZE
+#######################################################
+:local MAXSIZE 4000
+if ([:len $file]=0) do={
+ :put "Wrong parameter - file"
+ :return nil
+}
+
+#set names for main and bak
+:local file0 "$file.txt"
+:local file1 "$file.bak.txt"
+ 
+#set maximum allowed lines in file
+:local msize $MAXSIZE
+:if ([:len $maxsize]>0) do={:set msize $maxsize}
+:if ($msize>$MAXSIZE) do={
+ :put "Wrong parameter - maxsize"
+ :set msize $MAXSIZE
+}
+#:put "msize=$msize"
+
+#set text
+:if ([:len $text]=0) do={
+ :put "func_log2file: no text for output"
+ :return nil
+}
+
+:local outtext "$[/system clock get date] $[/system clock get time] $text"
+
+#output to local log
+:local loglevel "info"
+:if ([:len $log]>0) do={:set loglevel $log}
+#use execute due to direct call like "/log $loglevel text" gives error
+:if ($loglevel!="no") do={ :execute script="/log $loglevel \"$text\"" }
+
+#output to console
+:if ([:len $console]>0 and $console="yes") do={
+ :put "$loglevel: $outtext"
+}
+
+#appent topic to message
+:set outtext "$loglevel\t$outtext"
+
+#create file if none and exit
+:if ([:len [:file find name=$file0]]=0) do={
+ :execute script=":put \"$outtext\"" file=$file0
+ #delay is need to give time to file appearing
+ :delay 1s
+ :return nil
+} 
+
+#else get content of file
+:local content [/file get [/file find name=$file0] contents]
+:local csize [ :len $content ] ;
+
+:if (($csize+[:len $outtext]+2)>$msize) do={
+ :execute script=":put \"$content\"" file=$file1
+ /file set $file0 contents="$outtext\r\n"
+} else={
+ /file set $file0 contents="$content$outtext\r\n"
+}
+
+:return nil

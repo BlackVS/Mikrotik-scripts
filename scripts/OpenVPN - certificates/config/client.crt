@@ -1,0 +1,2 @@
+Here must be your client public certificate 
+(run certs_createClient and copy exported .crt certificate here)

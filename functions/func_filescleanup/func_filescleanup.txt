@@ -1,0 +1,67 @@
+######################################
+# Backups cleaning by VVS aka BlackVS, Ukraine
+# v.1 02/01/2017
+#Input:
+#        $ext - extension of file
+#        $prefix - prefix of file
+#        $count - how much files to leave. Rest will be deleted
+######################################
+# Some constants
+#  change them for customizing
+######################################
+#use external functions
+:local cmp2dates [:parse [/system script get func_cmp2dates source]]
+
+# backups and logs storage, empty if root
+#:local prefix "disk1/"
+#:local ext "auto.backup"
+#:local count 30
+
+:local reg "^$prefix.*$ext\$"
+#:put ($reg)
+:local arrBackups ([/file find name~$reg])
+#:put ($arrBackups)
+
+:local files2delete ([:len $arrBackups]-$count)
+
+#:put "Files to delete = $files2delete"
+
+:if ($files2delete>0) do={
+  :for i from 1 to $files2delete do={
+   #local variables
+   :local resName ""
+   :local resId
+   :local resDate ""
+   :local resTime ""
+   :foreach id in $arrBackups do={
+     #get properties
+     :local backup [/file get $id]
+     :local curName ($backup->"name")
+     :local curCreationTime ($backup->"creation-time")
+     :local curDate [:pick $curCreationTime 0 11]
+     :local curTime [:pick $curCreationTime 12 20]
+     :if ($resName="" ) do={
+       :set $resId $id
+       :set $resName $curName
+       :set $resDate $curDate
+       :set $resTime $curTime
+     }
+
+    :local cmp [$cmp2dates date1=$curDate date2=$resDate]
+    :if ($cmp=-1 or ($cmp=0 and [:totime $curTime]<[:totime $resTime])) do={
+      :set $resId $id
+      :set $resName $curName
+      :set $resDate $curDate
+      :set $resTime $curTime
+     }
+   }
+   #:put (">> ".$resName)
+   :if ($resName!="") do={ /file remove $resId }
+   #remove from array
+   :local newArray []
+   :foreach i in $arrBackups do={
+     :if ($i!=$resId) do={ :set $newArray ($newArray,$i) }
+   }
+   :set $arrBackups $newArray
+  }
+}

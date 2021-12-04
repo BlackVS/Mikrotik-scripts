@@ -1,0 +1,52 @@
+:local read do={:return}
+
+:local fconfig [:parse [/system script get certs_defaults source]]
+:local cfg [$fconfig]
+
+:local NAME ($cfg->"NAME")
+:local CA ($cfg->"CNCA")
+:local COUNTRY ($cfg->"COUNTRY")
+:local STATE ($cfg->"STATE")
+:local LOCALITY ($cfg->"LOCALITY")
+:local ORG ($cfg->"ORG")
+:local OU ($cfg->"OU")
+:local KEYSIZE ($cfg->"KEYSIZE")
+:local DAYSVALID ($cfg->"DAYSVALID")
+:local ALT ($cfg->"ALT")
+
+:put "Enter client name (CN):"
+# storing the value entered by the user
+:local CLIENTNAME [$read]
+:local CN ("$CLIENTNAME@$NAME")
+
+## generate a CA certificate
+/certificate
+:put "Creating template:"
+:put " CA=$CA"
+:put " CN=$CN"
+:put " COUNTRY=$COUNTRY"
+:put " STATE=$STATE"
+:put " LOCALITY=$LOCALITY"
+:put " ORG=$ORG"
+:put " OU=$OU"
+:put " KEYSIZE=$KEYSIZE"
+:put " DAYSVALID=$DAYSVALID"
+
+add name=tempCLIENT\
+country="$COUNTRY"\
+state="$STATE"\
+locality="$LOCALITY"\
+organization="$ORG"\
+unit="$OU"\
+common-name="$CN"\
+key-size=$KEYSIZE\
+days-valid=$DAYSVALID\
+key-usage=tls-client
+
+:put "Signing CLIENT-$CN key..."
+sign tempCLIENT ca="$CA" name="CLIENT-$CN"
+
+:put "Exporting CLIENT-$CN key..."
+:put "Enter password for new certificate (If used, passphrase must be at least 8 chars long!):"
+:local PASSW [$read]
+export-certificate "CLIENT-$CN" export-passphrase="$PASSW"

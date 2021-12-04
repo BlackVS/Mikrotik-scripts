@@ -1,0 +1,3 @@
+:local log2file [:parse [/system script get func_log2file source]]
+:put "\nfunc_log2file"
+:put [$log2file file="test" maxsize=400 text="Message bla-bla-bla" log=info console=yes]

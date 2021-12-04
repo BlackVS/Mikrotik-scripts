@@ -1,0 +1,46 @@
+:local fconfig [:parse [/system script get certs_defaults source]]
+:local cfg [$fconfig]
+
+:local NAME ($cfg->"NAME")
+:local CN ($cfg->"CNCA")
+:local COUNTRY ($cfg->"COUNTRY")
+:local STATE ($cfg->"STATE")
+:local LOCALITY ($cfg->"LOCALITY")
+:local ORG ($cfg->"ORG")
+:local OU ($cfg->"OU")
+:local KEYSIZE ($cfg->"KEYSIZE")
+:local DAYSVALID ($cfg->"DAYSVALID")
+:local ALT ($cfg->"ALT")
+
+## generate a CA certificate
+/certificate
+:put "Creating template:"
+:put " NAME=$NAME"
+:put " CN=$CN"
+:put " COUNTRY=$COUNTRY"
+:put " STATE=$STATE"
+:put " LOCALITY=$LOCALITY"
+:put " ORG=$ORG"
+:put " OU=$OU"
+:put " KEYSIZE=$KEYSIZE"
+:put " DAYSVALID=$DAYSVALID"
+
+add name=tempCA\
+country="$COUNTRY"\
+state="$STATE"\
+locality="$LOCALITY"\
+organization="$ORG"\
+unit="$OU"\
+common-name="$CN"\
+key-size=$KEYSIZE\
+days-valid=$DAYSVALID\
+subject-alt-name=$ALT\
+key-usage=crl-sign,key-cert-sign
+
+:put "Signing $CN key..."
+sign tempCA ca-crl-host=127.0.0.1 name=$CN
+
+:put "Exporting $CN key..."
+export-certificate "$CN" export-passphrase=""
+
+:put "Done!"

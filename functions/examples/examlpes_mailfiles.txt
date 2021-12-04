@@ -1,0 +1,18 @@
+:local backupconf "$[/system identity get name]-$[/system clock get time]-CONF.backup"
+:local backuplog "$[/system identity get name]-$[/system clock get time]-LOG.txt"
+
+:log info "Backup Configurations $backupconf"
+/system backup save name=$backupconf
+:log info "Backup pausing for 2s"
+:delay 2s
+
+:log info "Backup log $backuplog"
+/log print file=$backuplog
+:log info "Backup log pausing for 10s"
+:delay 3
+:log info "Backup being emailed"
+
+:local files {$backupconf;$backuplog}
+/tool e-mail send to="me@example.com" subject="$[/system identity get name]-$[/system clock get time] Backup Configuration & Log" file=$files
+
+:log info "backup LOG finished"
